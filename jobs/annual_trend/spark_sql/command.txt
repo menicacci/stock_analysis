@@ -1,0 +1,3 @@
+$SPARK_HOME/bin/spark-submit --master local $GITHUB_HOME/stock_analysis/jobs/annual_trend/spark_sql/spark_sql_job.py \
+    --input_path file:///$GITHUB_HOME/stock_analysis/dataset/merged_historical_stock_data.csv \
+    --output_path file:///$GITHUB_HOME/stock_analysis/output/{dir}

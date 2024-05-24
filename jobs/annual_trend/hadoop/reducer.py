@@ -5,6 +5,7 @@ import sys
 import numpy as np
 from collections import defaultdict
 from datetime import datetime
+from scripts import utils
 
 ticker_data = defaultdict(lambda: {
     "dates": [],
@@ -48,10 +49,10 @@ for (ticker, year), values in ticker_data.items():
     sorted_indices = np.argsort(dates)
     first_close = close_prices[sorted_indices[0]]
     last_close = close_prices[sorted_indices[-1]]
-    percentual_variation_rounded = round(((last_close - first_close) / first_close) * 100, 2)
+    percentual_variation_rounded = utils.calculate_percentual_variation(first_close, last_close)
 
-    max_high = max(high_prices)
-    min_low = min(low_prices)
+    max_high = utils.round_val(max(high_prices))
+    min_low = utils.round_val(min(low_prices))
     mean_volume = np.mean(volumes)
 
     print(f"{ticker},{name},{year},{percentual_variation_rounded},{min_low},{max_high},{mean_volume}")

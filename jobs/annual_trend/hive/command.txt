@@ -1,0 +1,2 @@
+$HADOOP_HOME/bin/hdfs dfs -put $GITHUB_HOME/stock_analysis/dataset/merged_historical_stock_data.csv input/annual_trend
+hive --f $GITHUB_HOME/stock_analysis/jobs/annual_trend/hive/query.hql

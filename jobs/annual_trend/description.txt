@@ -1,0 +1,8 @@
+Create a job that generates statistics for each stock from the year it entered the stock market, indicating for each stock:
+(a) the ticker symbol,
+(b) the company name,
+(c) a list showing the performance of the stock for each year it has been on the stock market, including for each year:
+(i) the percentage change in the stock price for the year (rounded percentage difference between the first and last closing price of the year),
+(ii) the minimum price for the year,
+(iii) the maximum price for the year,
+(iv) the average volume for the year.

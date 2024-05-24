@@ -62,9 +62,9 @@ SELECT
     name,
     year,
     ROUND(((last_close - first_close) / first_close) * 100, 2) AS percentual_variation_rounded,
-    MIN(low) AS min_low,
-    MAX(high) AS max_high,
-    AVG(volume) AS mean_volume
+    ROUND(MIN(low), 2) AS min_low,
+    ROUND(MAX(high), 2) AS max_high,
+    ROUND(AVG(volume), 2) AS mean_volume
 FROM
     stock_yearly_stats_with_window_functions
 GROUP BY
