@@ -51,3 +51,4 @@ SELECT * FROM ticker_yearly_stats;
 DROP TABLE IF EXISTS stock_data;
 DROP TABLE IF EXISTS stock_with_closes;
 DROP TABLE IF EXISTS ticker_yearly_stats;
+
