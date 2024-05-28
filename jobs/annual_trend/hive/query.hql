@@ -1,88 +1,53 @@
-SET mapreduce.map.memory.mb=4096;
-SET mapreduce.reduce.memory.mb=4096;
-SET mapreduce.map.java.opts=-Xmx3072m;
-SET mapreduce.reduce.java.opts=-Xmx3072m;
-SET mapreduce.job.reduces=20;
-SET hive.exec.reducers.bytes.per.reducer=67108864;
-SET hive.exec.reducers.max=50;
-SET hive.auto.convert.join=true;
-
-CREATE TABLE stock_data (
-    `ticker` STRING,
-    `open` DOUBLE,
-    `close` DOUBLE,
-    `adj_close` DOUBLE,
-    `low` DOUBLE,
-    `high` DOUBLE,
-    `volume` INT,
-    `stock_date` STRING,
-    `exchange` STRING,
-    `name` STRING,
-    `sector` STRING,
-    `industry` STRING
+CREATE TABLE IF NOT EXISTS stock_data (
+    `ticker` string,
+    `open` double,
+    `close` double,
+    `adj_close` double,
+    `low` double,
+    `high` double,
+    `volume` int,
+    `stock_date` string,
+    `exchange` string,
+    `name` string,
+    `sector` string,
+    `industry` string
 )
 ROW FORMAT DELIMITED
-FIELDS TERMINATED BY ','
-STORED AS TEXTFILE;
+FIELDS TERMINATED BY ',';
 
-LOAD DATA INPATH 'input/annual_trend/merged_historical_stock_data.csv' INTO TABLE stock_data;
+LOAD DATA INPATH 'input/merged_historical_stock_data.csv' INTO TABLE stock_data;
 
-CREATE TABLE stock_data_with_year AS
-SELECT
+
+CREATE TABLE IF NOT EXISTS stock_with_closes AS
+SELECT 
     ticker,
     name,
-    year(FROM_UNIXTIME(UNIX_TIMESTAMP(stock_date, 'yyyy-MM-dd'))) AS year,
-    close,
-    low,
+    YEAR(TO_DATE(stock_date)) AS year,
+    FIRST_VALUE(close) OVER (PARTITION BY ticker, YEAR(TO_DATE(stock_date)) ORDER BY TO_DATE(stock_date) ASC) AS first_close,
+    FIRST_VALUE(close) OVER (PARTITION BY ticker, YEAR(TO_DATE(stock_date)) ORDER BY TO_DATE(stock_date) DESC) AS last_close,
     high,
-    volume,
-    stock_date
-FROM
-    stock_data;
+    low,
+    volume
+FROM stock_data;
 
 
-CREATE TABLE stock_yearly_stats_with_window_functions AS
+CREATE TABLE IF NOT EXISTS ticker_yearly_stats AS
 SELECT
     ticker,
     name,
     year,
-    low,
-    high,
-    volume,
-    stock_date,
-    FIRST_VALUE(close) OVER (PARTITION BY ticker, year ORDER BY stock_date) AS first_close,
-    LAST_VALUE(close) OVER (PARTITION BY ticker, year ORDER BY stock_date ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS last_close
-FROM
-    stock_data_with_year;
-
-
-CREATE TABLE final_stock_yearly_stats AS
-SELECT
-    ticker,
-    name,
-    year,
-    ROUND(((last_close - first_close) / first_close) * 100, 2) AS percentual_variation_rounded,
-    ROUND(MIN(low), 2) AS min_low,
+    ROUND(((last_close - first_close) / first_close) * 100, 2) AS perc_variation,
     ROUND(MAX(high), 2) AS max_high,
-    ROUND(AVG(volume), 2) AS mean_volume
-FROM
-    stock_yearly_stats_with_window_functions
-GROUP BY
-    ticker,
-    name,
-    year,
-    first_close,
-    last_close
-ORDER BY
-    ticker,
-    year;
+    ROUND(MIN(low), 2) AS min_low,
+    ROUND(AVG(volume), 2) AS avg_volume
+FROM stock_with_closes
+GROUP BY ticker, name, year
+ORDER BY ticker;
 
 
-SELECT * FROM final_stock_yearly_stats;
+SELECT * FROM ticker_yearly_stats;
 
 
--- Drop the intermediate tables if they are no longer needed
-DROP TABLE stock_data_with_year;
-DROP TABLE final_stock_yearly_stats;
-DROP TABLE stock_yearly_stats_with_window_functions;
-DROP TABLE stock_data;
+DROP TABLE IF EXISTS stock_data;
+DROP TABLE IF EXISTS stock_with_closes;
+DROP TABLE IF EXISTS ticker_yearly_stats;
