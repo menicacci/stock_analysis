@@ -1,0 +1,1 @@
+A job capable of generating groups of companies whose stocks have shown the same trend in terms of annual variation for at least three consecutive years starting from 2000, indicating the companies and the common trend (e.g., {Apple, Intel, Amazon}: 2011:-1%, 2012:+3%, 2013:+5%).
