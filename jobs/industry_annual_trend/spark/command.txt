@@ -1,4 +1,4 @@
-export PYTHONPATH=$GITHUB_HOME/stock_analysis:$PYTHONPATHcd
+export PYTHONPATH=$GITHUB_HOME/stock_analysis:$PYTHONPATH
 $SPARK_HOME/bin/spark-submit --master local $GITHUB_HOME/stock_analysis/jobs/industry_annual_trend/spark/spark.py \
     --input_path file:///$GITHUB_HOME/stock_analysis/dataset/merged_historical_stock_data.csv \
-    --output_path file:///$GITHUB_HOME/stock_analysis/output/core
+    --output_path file:///$GITHUB_HOME/stock_analysis/output/{dir}
