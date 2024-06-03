@@ -57,7 +57,7 @@ SELECT
     ROUND(((fl.last_close - fl.first_close) / fl.first_close) * 100, 2) AS percentual_variation,
     ROUND(MIN(sd.low), 2) AS min_low,
     ROUND(MAX(sd.high), 2) AS max_high,
-    ROUND(AVG(sd.volume), 2) AS mean_volume
+    ROUND(SUM(sd.volume), 2) AS ovr_volume
 FROM
     stock_data_year sd
 JOIN
@@ -89,7 +89,7 @@ SELECT
     year,
     ticker,
     name,
-    MAX(mean_volume) AS highest_volume
+    MAX(ovr_volume) AS highest_volume
 FROM
     stock_stats
 GROUP BY
