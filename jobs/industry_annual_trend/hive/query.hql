@@ -68,6 +68,18 @@ GROUP BY
     sd.ticker, sd.name, sd.year, sd.sector, sd.industry, fl.first_close, fl.last_close;
 
 
+CREATE TABLE industry_annual_variation AS
+SELECT
+    sector,
+    industry,
+    year,
+    ROUND(((SUM(last_close) - SUM(first_close)) / SUM(first_close)) * 100, 2) AS percentual_variation_industry
+FROM
+    stock_stats
+GROUP BY
+    sector, industry, year;
+
+
 CREATE TABLE industry_highest_increase AS
 SELECT
     sector,
@@ -101,6 +113,7 @@ SELECT
     ih.sector,
     ih.industry,
     ih.year,
+    iav.percentual_variation_industry,
     ih.highest_percentual_increase,
     ih.name AS highest_increase_stock,
     hv.highest_volume,
@@ -111,7 +124,12 @@ JOIN
     industry_highest_volume hv
 ON
     ih.sector = hv.sector AND ih.industry = hv.industry AND ih.year = hv.year
+JOIN
+    industry_annual_variation iav
+ON
+    ih.sector = iav.sector AND ih.industry = iav.industry AND ih.year = iav.year
 ORDER BY
+    iav.percentual_variation_industry DESC,
     ih.sector, ih.industry, ih.year DESC;
 
 
@@ -122,6 +140,7 @@ DROP TABLE stock_data_temp;
 DROP TABLE stock_data_year;
 DROP TABLE stock_first_last_close;
 DROP TABLE stock_stats;
+DROP TABLE industry_annual_variation;
 DROP TABLE industry_highest_increase;
 DROP TABLE industry_highest_volume;
 DROP TABLE final_report;

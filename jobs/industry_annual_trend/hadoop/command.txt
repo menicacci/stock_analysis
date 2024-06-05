@@ -7,7 +7,7 @@ $HADOOP_HOME/bin/hdfs dfs -mkdir /user/matteo/input
 $HADOOP_HOME/bin/hdfs dfs -put $GITHUB_HOME/stock_analysis/dataset/merged_historical_stock_data.csv input
 
 # run commands
-export PYTHONPATH=$GITHUB_HOME/stock_analysis:$PYTHONPATHcd
+export PYTHONPATH=$GITHUB_HOME/stock_analysis:$PYTHONPATH
 $HADOOP_HOME/bin/hadoop jar $HADOOP_HOME/streaming/hadoop-streaming-3.3.4.jar \
     -mapper $GITHUB_HOME/stock_analysis/jobs/industry_annual_trend/hadoop/mapper.py \
     -reducer $GITHUB_HOME/stock_analysis/jobs/industry_annual_trend/hadoop/reducer.py \

@@ -5,8 +5,7 @@ import argparse
 from pyspark.sql import SparkSession
 import numpy as np
 from datetime import datetime
-import scripts.utils as utils 
-import json
+import scripts.utils as utils
 
 
 def parse_line(line):
